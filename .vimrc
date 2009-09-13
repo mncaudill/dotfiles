@@ -8,7 +8,3 @@ set autoindent
 set ignorecase
 set smartcase
 
-nmap <Leader>s :source $MYVIMRC
-nmap <Leader>e :e $MYVIMRC
-
-command Preview :!firefox %<CR>
