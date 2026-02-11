@@ -6,4 +6,3 @@ set smarttab
 set expandtab
 set autoindent
 set ignorecase
-set smartcasec
