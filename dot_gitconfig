@@ -3,3 +3,5 @@
 # Please adapt and uncomment the following lines:
 	name = Nolan Caudill
 	email = nolan@nolancaudill.com
+[init]
+	defaultBranch = main
