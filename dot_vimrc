@@ -142,8 +142,6 @@ set clipboard=unnamed
 " Show invisible characters (toggle with :set list!)
 set listchars=tab:→\ ,trail:·,nbsp:␣
 
-" Highlight column 80 (optional code style guide)
-set colorcolumn=80
 
 " Faster update time (better for plugins if you add them later)
 set updatetime=300
