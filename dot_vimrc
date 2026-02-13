@@ -1,8 +1,190 @@
-syntax on
+" ============================================================================
+" Basic Settings
+" ============================================================================
+
+" Use Vim settings, not Vi settings
+set nocompatible
+
+" Enable file type detection and plugins
+filetype plugin indent on
+
+" Enable syntax highlighting
+syntax enable
+
+
+" ============================================================================
+" Paste Mode Fix (Your Main Issue)
+" ============================================================================
+
+" Toggle paste mode with F2 - fixes auto-indent when pasting
+set pastetoggle=<F2>
+
+" Show when paste mode is active in status line
+set showmode
+
+
+" ============================================================================
+" Display & Interface
+" ============================================================================
+
+" Show line numbers
+set number
+
+" Show relative line numbers (helpful for motions like 5j)
+set relativenumber
+
+" Highlight current line
+set cursorline
+
+" Show command in bottom bar
+set showcmd
+
+" Visual autocomplete for command menu
+set wildmenu
+set wildmode=longest:full,full
+
+" Show matching brackets
+set showmatch
+
+" Always show status line
+set laststatus=2
+
+" Display cursor position
+set ruler
+
+
+" ============================================================================
+" Indentation & Formatting
+" ============================================================================
+
+" Use spaces instead of tabs
+set expandtab
+
+" Number of spaces per tab
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
-set smarttab
-set expandtab
+
+" Copy indent from current line when starting new line
 set autoindent
+
+" Smart indenting for code
+set smartindent
+
+
+" ============================================================================
+" Search Settings
+" ============================================================================
+
+" Incremental search - search as you type
+set incsearch
+
+" Highlight search results
+set hlsearch
+
+" Case insensitive search...
 set ignorecase
+
+" ...unless search contains uppercase letters
+set smartcase
+
+" Clear search highlighting with ,<space>
+nnoremap <leader><space> :nohlsearch<CR>
+
+
+" ============================================================================
+" File Handling
+" ============================================================================
+
+" Auto-reload files changed outside vim
+set autoread
+
+" Don't create backup files
+set nobackup
+set nowritebackup
+
+" Don't create swap files (can be annoying)
+set noswapfile
+
+" Undo settings
+set undolevels=1000
+
+
+" ============================================================================
+" Editing Behavior
+" ============================================================================
+
+" Allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+" Keep cursor context lines when scrolling
+set scrolloff=5
+set sidescrolloff=5
+
+" Split windows below and right (more natural)
+set splitbelow
+set splitright
+
+" Enable mouse support (helpful for scrolling/clicking)
+set mouse=a
+
+
+" ============================================================================
+" Quality of Life Improvements
+" ============================================================================
+
+" Don't redraw during macros (faster)
+set lazyredraw
+
+" Use system clipboard
+set clipboard=unnamed
+
+" Show invisible characters (toggle with :set list!)
+set listchars=tab:→\ ,trail:·,nbsp:␣
+
+" Highlight column 80 (optional code style guide)
+set colorcolumn=80
+
+" Faster update time (better for plugins if you add them later)
+set updatetime=300
+
+
+" ============================================================================
+" Useful Key Mappings
+" ============================================================================
+
+" Map leader key to comma (easier to reach than default \)
+let mapleader=","
+
+" Quick save with ,w
+nnoremap <leader>w :w<CR>
+
+" Quick quit with ,q
+nnoremap <leader>q :q<CR>
+
+" Move between splits more easily
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Move lines up/down with Ctrl+j/k in visual mode
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" Toggle line numbers with ,n
+nnoremap <leader>n :set number! relativenumber!<CR>
+
+
+" ============================================================================
+" Final Notes
+" ============================================================================
+" 
+" How to use paste mode:
+" 1. Press F2 before pasting (you'll see -- INSERT (paste) -- in status)
+" 2. Paste your code (Cmd+V / Ctrl+V)
+" 3. Press F2 again to exit paste mode
+"
+" Or use :set paste before pasting and :set nopaste after
+"
+
