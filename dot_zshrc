@@ -1,3 +1,191 @@
-alias ll="ls -l"
-
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# ============================================================================
+# Basic Environment
+# ============================================================================
+
+# Colors for ls
+export CLICOLOR=1
+export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
+
+# Default editor
+export EDITOR='vim'
+
+# ============================================================================
+# History Configuration
+# ============================================================================
+
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+# Share history across all sessions
+setopt SHARE_HISTORY
+
+# Don't record duplicate commands
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+
+# Remove superfluous blanks
+setopt HIST_REDUCE_BLANKS
+
+# Don't save commands starting with space
+setopt HIST_IGNORE_SPACE
+
+# Better history search with arrow keys
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search    # Up arrow
+bindkey "^[[B" down-line-or-beginning-search  # Down arrow
+
+# ============================================================================
+# Prompt Configuration with Git Integration
+# ============================================================================
+
+# Enable git info in prompt
+autoload -Uz vcs_info
+precmd() { vcs_info }
+
+# Configure git prompt
+zstyle ':vcs_info:git:*' formats ' [%b%u%c]'
+zstyle ':vcs_info:git:*' actionformats ' [%b|%a%u%c]'
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '*'
+zstyle ':vcs_info:*' stagedstr '+'
+
+setopt PROMPT_SUBST
+
+# Color-coded prompt
+# Format: [user@host:directory] [git-branch*]
+# $ command goes here
+PROMPT='%F{cyan}[%n@%m:%~]%f%F{yellow}${vcs_info_msg_0_}%f
+%F{green}$%f '
+
+# ============================================================================
+# Completion System
+# ============================================================================
+
+# Enable completion
+autoload -Uz compinit
+compinit
+
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Colored completion (directories, etc.)
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Better completion menu
+zstyle ':completion:*' menu select
+
+# ============================================================================
+# Homebrew Configuration
+# ============================================================================
+
+# Add Homebrew to PATH (adjust if you have Apple Silicon vs Intel Mac)
+# Apple Silicon (M1/M2/M3):
+if [[ -f /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+# Intel Mac:
+elif [[ -f /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# ============================================================================
+# Useful Aliases
+# ============================================================================
+
+# Directory navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+
+# ls aliases with color
+alias ls='ls -G'
+alias ll='ls -lah'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Git aliases
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gco='git checkout'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+alias gd='git diff'
+alias gb='git branch'
+alias gpl='git pull'
+
+# Docker aliases
+alias d='docker'
+alias dc='docker compose'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias di='docker images'
+alias dex='docker exec -it'
+alias dlogs='docker logs -f'
+alias dstop='docker stop $(docker ps -q)'
+alias dclean='docker system prune -af'
+
+# Safe operations
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Misc utilities
+alias grep='grep --color=auto'
+alias mkdir='mkdir -pv'
+alias path='echo $PATH | tr ":" "\n"'
+alias reload='source ~/.zshrc'
+
+# Get current IP
+alias myip='curl -s https://api.ipify.org && echo'
+
+# ============================================================================
+# Functions
+# ============================================================================
+
+# Create directory and cd into it
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
+# Quick find
+qfind() {
+  find . -name "*$1*"
+}
+
+# Git: create branch and switch to it
+gcb() {
+  git checkout -b "$1"
+}
+
+# Docker: quick container bash access
+dbash() {
+  docker exec -it "$1" /bin/bash
+}
+
+# Docker: quick container sh access (for alpine images)
+dsh() {
+  docker exec -it "$1" /bin/sh
+}
+
+# ============================================================================
+# Additional Settings
+# ============================================================================
+
+# Disable the annoying correction prompts
+unsetopt correct_all
+
+# Enable comments in interactive shell
+setopt interactivecomments
+
+# Don't beep
+unsetopt beep
+
+# Auto cd when typing just a directory name
+setopt AUTO_CD
