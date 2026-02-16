@@ -52,6 +52,10 @@ set laststatus=2
 " Display cursor position
 set ruler
 
+" Soft visual line wrapping at word boundaries (no mid-word breaks)
+set wrap
+set linebreak
+
 
 " ============================================================================
 " Indentation & Formatting
@@ -64,6 +68,9 @@ set expandtab
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
+
+" Prevent automatic hard line breaks (ftplugins may set textwidth otherwise)
+set textwidth=0
 
 " Copy indent from current line when starting new line
 set autoindent
@@ -181,9 +188,9 @@ augroup ProseMode
   " Core writing behavior
   autocmd FileType markdown,text,gitcommit setlocal wrap linebreak breakindent
   autocmd FileType markdown,text,gitcommit setlocal spell spelllang=en_us
-  autocmd FileType markdown,text,gitcommit setlocal textwidth=80
+  autocmd FileType markdown,text setlocal textwidth=0 wrapmargin=0
   autocmd FileType gitcommit setlocal textwidth=72
-  autocmd FileType markdown,text,gitcommit setlocal formatoptions+=t
+  autocmd FileType gitcommit setlocal formatoptions+=t
   autocmd FileType markdown,text,gitcommit setlocal formatoptions-=c formatoptions-=r formatoptions-=o
   autocmd FileType markdown,text,gitcommit setlocal nosmartindent autoindent
 
