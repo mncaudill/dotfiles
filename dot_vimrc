@@ -173,6 +173,29 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 " Toggle line numbers with ,n
 nnoremap <leader>n :set number! relativenumber!<CR>
 
+" ============================================================================
+" Prose-first mode (Markdown, text, commit messages)
+" ============================================================================
+augroup ProseMode
+  autocmd!
+  " Core writing behavior
+  autocmd FileType markdown,text,gitcommit setlocal wrap linebreak breakindent
+  autocmd FileType markdown,text,gitcommit setlocal spell spelllang=en_us
+  autocmd FileType markdown,text,gitcommit setlocal textwidth=80
+  autocmd FileType gitcommit setlocal textwidth=72
+  autocmd FileType markdown,text,gitcommit setlocal formatoptions+=t
+  autocmd FileType markdown,text,gitcommit setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+  autocmd FileType markdown,text,gitcommit setlocal nosmartindent autoindent
+
+  " Reduce visual noise for prose
+  autocmd FileType markdown,text,gitcommit setlocal nonumber norelativenumber
+  autocmd FileType markdown,text,gitcommit setlocal nocursorline nolist
+  autocmd FileType markdown,text,gitcommit setlocal foldcolumn=0 signcolumn=no
+augroup END
+
+" Quick prose helpers
+nnoremap <leader>s :setlocal spell!<CR>
+nnoremap <leader>p :setlocal wrap! linebreak! breakindent!<CR>
 
 " ============================================================================
 " Final Notes
