@@ -5,3 +5,5 @@
 	email = nolan@nolancaudill.com
 [init]
 	defaultBranch = main
+[pull]
+	rebase = true
