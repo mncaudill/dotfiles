@@ -195,3 +195,5 @@ unsetopt beep
 # Auto cd when typing just a directory name
 setopt AUTO_CD
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$PATH:$(go env GOPATH)/bin"
+
