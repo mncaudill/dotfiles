@@ -1,0 +1,4 @@
+# flowtorio user config (global or project-local override)
+[flowtorio]
+editor = vim
+username = nolan
