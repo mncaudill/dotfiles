@@ -2,3 +2,11 @@
 [flowtorio]
 editor = vim
 username = nolan
+
+
+[flowtorio "links"]
+workspace = /Users/nolan/Projects/flowtorio
+install = /Users/nolan/Projects/flowtorio-issues
+
+workspace = /Users/nolan/Projects/nolancaudill.com
+install = /Users/nolan/Projects/flowtorio-issues
