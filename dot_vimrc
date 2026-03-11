@@ -215,4 +215,50 @@ nnoremap <leader>p :setlocal wrap! linebreak! breakindent!<CR>
 "
 " Or use :set paste before pasting and :set nopaste after
 "
+" ── Homebrew Terminal Color Overrides ──────────────────────────────────────
+
+" Spell checking: use underline instead of colored background
+hi SpellBad   cterm=underline ctermfg=NONE ctermbg=NONE
+hi SpellCap   cterm=underline ctermfg=NONE ctermbg=NONE
+hi SpellRare  cterm=underline ctermfg=NONE ctermbg=NONE
+hi SpellLocal cterm=underline ctermfg=NONE ctermbg=NONE
+
+" Search highlights: visible against black without washing out green text
+hi Search     cterm=NONE ctermfg=0   ctermbg=2
+hi IncSearch  cterm=bold ctermfg=0   ctermbg=10
+
+" Visual selection: subtle dark highlight
+hi Visual     cterm=NONE ctermfg=NONE ctermbg=0
+
+" Line numbers: dimmer so they don't compete with code
+hi LineNr     cterm=NONE ctermfg=2   ctermbg=NONE
+hi CursorLineNr cterm=bold ctermfg=10 ctermbg=NONE
+
+" Status line: invert for contrast
+hi StatusLine   cterm=reverse ctermfg=NONE ctermbg=NONE
+hi StatusLineNC cterm=NONE    ctermfg=2    ctermbg=NONE
+
+" Cursor line: just a very subtle tint
+hi CursorLine cterm=NONE ctermfg=NONE ctermbg=NONE
+
+" Pmenu (autocomplete popup)
+hi Pmenu      cterm=NONE ctermfg=10  ctermbg=0
+hi PmenuSel   cterm=bold ctermfg=0   ctermbg=2
+hi PmenuSbar  cterm=NONE ctermfg=NONE ctermbg=0
+
+" Vertical split divider
+hi VertSplit  cterm=NONE ctermfg=2   ctermbg=NONE
+
+" Matching brackets
+hi MatchParen cterm=bold,underline ctermfg=10 ctermbg=NONE
+
+" Errors/warnings: red is fine in Homebrew, just avoid bad backgrounds
+hi Error      cterm=bold ctermfg=1   ctermbg=NONE
+hi WarningMsg cterm=NONE ctermfg=3   ctermbg=NONE
+
+" Diff colors
+hi DiffAdd    cterm=NONE ctermfg=0   ctermbg=2
+hi DiffDelete cterm=NONE ctermfg=1   ctermbg=NONE
+hi DiffChange cterm=NONE ctermfg=0   ctermbg=3
+hi DiffText   cterm=bold ctermfg=0   ctermbg=3
 
