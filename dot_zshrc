@@ -192,8 +192,12 @@ setopt interactivecomments
 # Don't beep
 unsetopt beep
 
+# When SSHing, use a more compatible TERM
+alias ssh='TERM=xterm-256color ssh'
+
 # Auto cd when typing just a directory name
 setopt AUTO_CD
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
+
 
