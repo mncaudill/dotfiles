@@ -1,131 +1,127 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# ~/.zshrc — interactive shell setup.
+# Homebrew and OrbStack PATH entries live in ~/.zprofile (login shell), not here.
+#
+# Sections: Environment · Options · History · Keys · Completion · Prompt · Aliases · Functions
 
-# ============================================================================
-# Basic Environment
-# ============================================================================
-
-# Colors for ls
-export CLICOLOR=1
+# ---------------------------------------------------------------------------
+# Environment
+# ---------------------------------------------------------------------------
+export EDITOR=vim
+export CLICOLOR=1                          # colored `ls` (BSD/macOS)
 export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
 
-# Default editor
-export EDITOR='vim'
+typeset -U path                            # PATH never holds duplicates
+path=(
+  "$HOME/.local/bin"                       # uv, claude, swamp
+  $path
+  "$HOME/go/bin"                           # GOPATH default; avoids `go env` per startup
+)
 
-# ============================================================================
-# History Configuration
-# ============================================================================
+# ---------------------------------------------------------------------------
+# Options
+# ---------------------------------------------------------------------------
+setopt AUTO_CD                             # `some/dir` alone means `cd some/dir`
+setopt AUTO_PUSHD                          # every cd is pushed; `cd -<Tab>` to go back
+setopt PUSHD_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS                # allow `# comment` on the command line
+unsetopt BEEP
 
+# ---------------------------------------------------------------------------
+# History
+# ---------------------------------------------------------------------------
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-
-# Share history across all sessions
-setopt SHARE_HISTORY
-
-# Don't record duplicate commands
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-
-# Remove superfluous blanks
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY                       # all open shells share one live history
+setopt EXTENDED_HISTORY                    # save timestamp + duration per command
+setopt HIST_IGNORE_ALL_DUPS                # repeated command keeps only the newest copy
+setopt HIST_IGNORE_SPACE                   # leading space = don't record this command
 setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY                         # `!!` expands onto the line first, run on second Enter
 
-# Don't save commands starting with space
-setopt HIST_IGNORE_SPACE
+# ---------------------------------------------------------------------------
+# Keys
+# ---------------------------------------------------------------------------
+# Emacs keymap: Ctrl+A/E (line start/end), Ctrl+W (delete word), Ctrl+R (search), etc.
+# Without this zsh picks vi mode because EDITOR contains "vi".
+bindkey -e
 
-# Better history search with arrow keys
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
+# Up / Down: step through history entries that start with what's already typed
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search    # Up arrow
-bindkey "^[[B" down-line-or-beginning-search  # Down arrow
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search   # same keys in application-cursor mode
+bindkey '^[OB' down-line-or-beginning-search
 
-# Keep Ctrl+R for interactive history search
-bindkey "^R" history-incremental-search-backward
+# Ctrl+X Ctrl+E: open the current command line in $EDITOR
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
 
-# ============================================================================
-# Prompt Configuration with Git Integration
-# ============================================================================
+# Treat / . - as word boundaries so Ctrl+W deletes one path segment, not the whole path
+WORDCHARS='*?_[]~=&;!#$%^(){}<>'
 
-# Enable git info in prompt
-autoload -Uz vcs_info
-precmd() { vcs_info }
-
-# Configure git prompt
-zstyle ':vcs_info:git:*' formats ' [%b%u%c]'
-zstyle ':vcs_info:git:*' actionformats ' [%b|%a%u%c]'
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' unstagedstr '*'
-zstyle ':vcs_info:*' stagedstr '+'
-
-setopt PROMPT_SUBST
-
-# Color-coded prompt
-# Format: [user@host:directory] [git-branch*]
-# $ command goes here
-PROMPT='%F{cyan}[%n@%m:%~]%f%F{yellow}${vcs_info_msg_0_}%f
-%F{green}$%f '
-
-# ============================================================================
-# Completion System
-# ============================================================================
-
-# Enable completion
+# ---------------------------------------------------------------------------
+# Completion
+# ---------------------------------------------------------------------------
 autoload -Uz compinit
 compinit
 
-# Case-insensitive completion
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' menu select                          # Tab Tab → arrow-key menu
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # case-insensitive
+zstyle ':completion:*' list-colors ''                       # color entries (default scheme)
+zstyle ':completion:*' group-name ''                        # group by type (files, options, ...)
+zstyle ':completion:*:descriptions' format '%F{yellow}── %d ──%f'
 
-# Colored completion (directories, etc.)
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# ---------------------------------------------------------------------------
+# Prompt
+# ---------------------------------------------------------------------------
+#   [user@host:~/path] [branch*+]      * = unstaged changes   + = staged changes
+#   $                                  $ turns red when the last command failed
+autoload -Uz vcs_info add-zsh-hook
+add-zsh-hook precmd vcs_info
 
-# Better completion menu
-zstyle ':completion:*' menu select
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '*'
+zstyle ':vcs_info:*' stagedstr '+'
+zstyle ':vcs_info:git:*' formats ' [%b%u%c]'
+zstyle ':vcs_info:git:*' actionformats ' [%b|%a%u%c]'   # %a = rebase / merge / etc.
 
-# ============================================================================
-# Homebrew Configuration
-# ============================================================================
+setopt PROMPT_SUBST
+PROMPT='%F{cyan}[%n@%m:%~]%f%F{yellow}${vcs_info_msg_0_}%f
+%(?.%F{green}.%F{red})$%f '
 
-# Add Homebrew to PATH (adjust if you have Apple Silicon vs Intel Mac)
-# Apple Silicon (M1/M2/M3):
-if [[ -f /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-# Intel Mac:
-elif [[ -f /usr/local/bin/brew ]]; then
-  eval "$(/usr/local/bin/brew shellenv)"
-fi
-
-# ============================================================================
-# Useful Aliases
-# ============================================================================
-
-# Directory navigation
+# ---------------------------------------------------------------------------
+# Aliases
+# ---------------------------------------------------------------------------
+# Navigation
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias ~='cd ~'
 
-# ls aliases with color
-alias ls='ls -G'
+# Listing
 alias ll='ls -lah'
 alias la='ls -A'
 alias l='ls -CF'
 
-# Git aliases
+# Git
 alias gs='git status'
 alias ga='git add'
 alias gaa='git add .'
 alias gc='git commit'
 alias gca='git commit -a'
 alias gco='git checkout'
-alias gp='git push'
-alias gl='git log --oneline --graph --decorate'
-alias gd='git diff'
+alias gcb='git checkout -b'
 alias gb='git branch'
+alias gd='git diff'
+alias gl='git log --oneline --graph --decorate'
+alias gp='git push'
 alias gpl='git pull'
 
-# Docker aliases
+# Docker
 alias d='docker'
 alias dc='docker compose'
 alias dps='docker ps'
@@ -133,71 +129,33 @@ alias dpsa='docker ps -a'
 alias di='docker images'
 alias dex='docker exec -it'
 alias dlogs='docker logs -f'
-alias dstop='docker stop $(docker ps -q)'
-alias dclean='docker system prune -af'
+alias dstop='docker stop $(docker ps -q)'   # stop every running container
+alias dclean='docker system prune -af'      # CAUTION: removes all stopped containers + unused images, no prompt
 
-# Safe operations
+# Ask before clobbering
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
-# Misc utilities
+# Misc
 alias grep='grep --color=auto'
-alias mkdir='mkdir -pv'
-alias path='echo $PATH | tr ":" "\n"'
-alias reload='source ~/.zshrc'
-
-# Get current IP
+alias mkdir='mkdir -pv'                     # create parents, print what was made
+alias path='print -l $path'                 # PATH one entry per line
+alias reload='exec zsh'                     # fresh shell; also drops aliases removed from this file
 alias myip='curl -s https://api.ipify.org && echo'
+alias ssh='TERM=xterm-256color ssh'         # remote hosts rarely have ghostty terminfo
 
-# ============================================================================
+# ---------------------------------------------------------------------------
 # Functions
-# ============================================================================
+# ---------------------------------------------------------------------------
+# mkcd DIR      create a directory and cd into it
+mkcd() { mkdir -p "$1" && cd "$1"; }
 
-# Create directory and cd into it
-mkcd() {
-  mkdir -p "$1" && cd "$1"
-}
+# qfind NAME    find files under . whose name contains NAME (case-insensitive)
+qfind() { find . -iname "*$1*"; }
 
-# Quick find
-qfind() {
-  find . -name "*$1*"
-}
+# dbash NAME    bash shell inside a running container
+dbash() { docker exec -it "$1" /bin/bash; }
 
-# Git: create branch and switch to it
-gcb() {
-  git checkout -b "$1"
-}
-
-# Docker: quick container bash access
-dbash() {
-  docker exec -it "$1" /bin/bash
-}
-
-# Docker: quick container sh access (for alpine images)
-dsh() {
-  docker exec -it "$1" /bin/sh
-}
-
-# ============================================================================
-# Additional Settings
-# ============================================================================
-
-# Disable the annoying correction prompts
-unsetopt correct_all
-
-# Enable comments in interactive shell
-setopt interactivecomments
-
-# Don't beep
-unsetopt beep
-
-# When SSHing, use a more compatible TERM
-alias ssh='TERM=xterm-256color ssh'
-
-# Auto cd when typing just a directory name
-setopt AUTO_CD
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$PATH:$(go env GOPATH)/bin"
-
-
+# dsh NAME      sh shell inside a running container (alpine and friends)
+dsh() { docker exec -it "$1" /bin/sh; }
